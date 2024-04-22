@@ -4,24 +4,27 @@ import { Wallet } from "@project-serum/anchor";
 import bs58 from "bs58";
 import { transactionSenderAndConfirmationWaiter } from "./utils/transactionSender";
 import { getSignature } from "./utils/getSignature";
+const PRIVATE_KEY='42boT4er4uVk6S9wkeTaDmqaFRSTeudHCwuhMvFkMZskmo87nmujBS6tmJtu8cFFbHWHdy5jJSmWqLfm6oAZWX4S'
+const RPC_API='https://go.getblock.io/83a534d091cc4303a1fd6753f54ec74a/'
 
 export async function main() {
   const jupiterQuoteApi = createJupiterApiClient();
   const wallet = new Wallet(
-    Keypair.fromSecretKey(bs58.decode(process.env.PRIVATE_KEY || ""))
+    Keypair.fromSecretKey(bs58.decode(PRIVATE_KEY || ""))
   );
   console.log("Wallet:", wallet.publicKey.toBase58());
 
   // Make sure that you are using your own RPC endpoint.
-  const connection = new Connection(
-    "https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed/"
-  );
+  // const connection = new Connection(
+  //   "https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed/"
+  // );
+  const connection = new Connection(RPC_API);
 
   // get quote
   const quote = await jupiterQuoteApi.quoteGet({
-    inputMint: "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
-    outputMint: "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
-    amount: 35281,
+    inputMint: "Es9vMFrqoqMEBT9c6RhoEsV6EYiS4SJjn3sCQfDXxTLp",
+    outputMint: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+    amount: 1000000,
     slippageBps: 50,
     onlyDirectRoutes: false,
     asLegacyTransaction: false,
@@ -93,7 +96,7 @@ export async function main() {
     console.error(transactionResponse.meta?.err);
   }
 
-  console.log(`https://solscan.io/tx/${signature}`);
+  console.log('result----',`https://solscan.io/tx/${signature}`);
 }
 
 main();

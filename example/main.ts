@@ -1,8 +1,12 @@
+import { runDCA } from './dca';
 import { getLimitOrders, limit } from './limit';
 import { swapJup } from './swap';
 import { generateRandomTimestamp } from './utils';
 
+//执行交易成功次数
 let successCount = 0;
+
+//结束交易的次数
 const stopCount = 100;
 
 // 定义定时器的回调函数
@@ -24,7 +28,13 @@ async function runSwap() {
     }
 }
 
-// 立即启动运行
+// swap策略
 runSwap();
+
+// limit策略
+
 // limit()
 // getLimitOrders()
+
+// DCA策略
+// runDCA()

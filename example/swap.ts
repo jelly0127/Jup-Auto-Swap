@@ -31,63 +31,62 @@ export async function swapJup() {
   
   const connection = new Connection(RPC_API);
 
-  // get quote
+   // 请求交换报价
   const quote = await jupiterQuoteApi.quoteGet({
-    inputMint: INPUT_COIN_ADDRESS,
-    outputMint: OUTPUT_COIN_ADDRESS,
-    amount: SWAP_OUTPUT_COIN_AMOUNT,
-    slippageBps: 100,//滑点值
-    onlyDirectRoutes: false,
-    asLegacyTransaction: false,
+    inputMint: INPUT_COIN_ADDRESS, // 输入代币
+    outputMint: OUTPUT_COIN_ADDRESS, // 输出代币
+    amount: SWAP_OUTPUT_COIN_AMOUNT, // 交换数量
+    slippageBps: 100, // 滑点值，基点表示
+    onlyDirectRoutes: false, // 是否只使用直接路径
+    asLegacyTransaction: false, // 是否使用传统交易格式
   });
-
+ // 如果无法获取报价，打印错误并返回
   if (!quote) {
     console.error("unable to quote");
     return;
   }
 
-  // Get serialized transaction
+  // 获取交换交易信息
   const swapResult = await jupiterQuoteApi.swapPost({
     swapRequest: {
       quoteResponse: quote,
-      userPublicKey: wallet.publicKey.toBase58(),
-      dynamicComputeUnitLimit: true,
-      prioritizationFeeLamports: "auto",
-      // prioritizationFeeLamports: {
-      //   autoMultiplier: 2,
-      // },
+      userPublicKey: wallet.publicKey.toBase58(), // 用户公钥
+      dynamicComputeUnitLimit: true, // 是否动态计算单位限制
+      prioritizationFeeLamports: "auto", // 优先费用，自动计算
     },
   });
 
+
   console.dir(swapResult, { depth: null });
 
-  // Serialize the transaction
+ // 交易序列化
   const swapTransactionBuf = Buffer.from(swapResult.swapTransaction, "base64");
   var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
 
-  // Sign the transaction
+ // 签署交易
   transaction.sign([wallet.payer]);
   const signature = getSignature(transaction);
 
-  // We first simulate whether the transaction would be successful
+  // 首先模拟交易以检测是否能成功执行
   const { value: simulatedTransactionResponse } =
     await connection.simulateTransaction(transaction, {
-      replaceRecentBlockhash: true,
-      commitment: "processed",
+      replaceRecentBlockhash: true, // 替换最近的区块哈希
+      commitment: "processed", // 提交级别
     });
   const { err, logs } = simulatedTransactionResponse;
 
+  // 检查模拟执行是否有错误，如果有，打印错误和日志
   if (err) {
-    // Simulation error, we can check the logs for more details
-    // If you are getting an invalid account error, make sure that you have the input mint account to actually swap from.
     console.error("Simulation Error:");
     console.error({ err, logs });
     return;
   }
 
+    // 发送交易，并等待确认
   const serializedTransaction = Buffer.from(transaction.serialize());
   const blockhash = transaction.message.recentBlockhash;
 
+    // 等待交易确认
   const transactionResponse = await transactionSenderAndConfirmationWaiter({
     connection,
     serializedTransaction,
@@ -97,15 +96,17 @@ export async function swapJup() {
     },
   });
 
-  // If we are not getting a response back, the transaction has not confirmed.
+  // 如果没有收到回复，则交易尚未确认。
   if (!transactionResponse) {
     console.error("Transaction not confirmed");
     return;
   }
 
+  // 如果错误，打印错误信息
   if (transactionResponse.meta?.err) {
     console.error(transactionResponse.meta?.err);
   }
+  //如果成功，返回交易哈希，并退出结束本次交易
   if (signature) return `https://solscan.io/tx/${signature}`
 }
 

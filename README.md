@@ -1,66 +1,33 @@
-# JavaScript API Client for Jupiter V6
+# Jupiter 策略交易脚本
 
-## Table of Contents
+# 1.yarn or npm i
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Examples](#examples)
-  - [Using Custom URLs](#using-custom-urls)
-  - [Paid Hosted APIs](#paid-hosted-apis)
+# 2.创建.env文件 
+## 钱包私钥
+### PRIVATE_KEY=
 
-## Installation
+##  RPC节点
+### RPC_API = 
 
-To use the Jupiter API client, you need to have Node.js and npm (Node Package Manager) installed. Then, you can install the package using npm:
+## 被兑换代币地址 如 usdt
+### INPUT_COIN_ADDRESS=
 
-```bash
-npm install @jup-ag/api
-```
+## 需兑换代币地址 如 jup
+### OUTPUT_COIN_ADDRESS = 
 
-## Developer to publish
-- bump version
-- pnpm build
-- npm publish --access public
+## swap 需兑换代币数量 1U=1000000
+### SWAP_OUTPUT_COIN_AMOUNT=1000000
 
-## Usage
+## limit 需兑换代币数量 1U=1000000
+### LIMIT_OUTPUT_COIN_AMOUNT=1000000
 
-To start using the API client, you need to require it in your Node.js project:
+## limit 被兑换代币数量 1U=1000000
+### LIMIT_INPUT_COIN_AMOUNT=1000000
 
-```typescript
-import { createJupiterApiClient } from '@jup-ag/api';
 
-const jupiterQuoteApi = createJupiterApiClient(config); // config is optional
+# 3.在example/main/中注释放行需要执行的策略
+# 4.yarn start
 
-```
 
-Now, you can call methods provided by the API client to interact with Jupiter's API. For example:
-
-```typescript
-jupiterQuoteApi.quoteGet({
-    inputMint: "So11111111111111111111111111111111111111112",
-    outputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-    amount: "100000000",
-    // platformFeeBps: 10,
-    // asLegacyTransaction: true, // legacy transaction, default is versoined transaction
-})
-```
-
-## Examples
-
-Checkout the example in the repo. [link](/example/index.ts)
-
-### Using Custom URLs
-
-You can set custom URLs via the configuration for any self-hosted Jupiter APIs, like the [V6 Swap API](https://station.jup.ag/docs/apis/self-hosted) or the [paid hosted APIs](#paid-hosted-apis)
-
-```typescript
-import { createJupiterApiClient } from '@jup-ag/api';
-
-const config = {
-    basePath: 'https://hosted.api'
-};
-const jupiterQuoteApi = createJupiterApiClient(config);
-```
-
-### Paid Hosted APIs
-
-You can also check out some of the [paid hosted APIs](https://station.jup.ag/docs/apis/self-hosted#paid-hosted-apis).
+# example/generateOkxWallet/ 生成okx钱包并记录为Excel表存贮
+# example/getWalletFromExcel/ 读取Excel表存贮的钱包数据，可以将交易所账户生成的子账号导入并命名为 Wallets.xlsx

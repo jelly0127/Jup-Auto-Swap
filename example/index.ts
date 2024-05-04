@@ -22,9 +22,9 @@ export async function main() {
 
   // get quote
   const quote = await jupiterQuoteApi.quoteGet({
-    inputMint: "Es9vMFrqoqMEBT9c6RhoEsV6EYiS4SJjn3sCQfDXxTLp",
+    inputMint: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
     outputMint: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
-    amount: 1000000,
+    amount: 100000,
     slippageBps: 50,
     onlyDirectRoutes: false,
     asLegacyTransaction: false,
